@@ -21,7 +21,7 @@ public class mainSolo extends Application {
 
         // Run simulation
         primaryStage.show();
-        simulation.run(1000);
+        simulation.run(10000);
     }
 
     public static void main(String[] args) {

@@ -69,13 +69,13 @@ public class Agent extends Thread implements IElement{
 
     public void run(){
         init();
-        if(slowMode) {
+        /*if (slowMode) {
             try {
                 Thread.sleep((long) (2000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         while (!(isInterrupted()
                 ||
                 (steps-- <= 0 && !isHolding())
