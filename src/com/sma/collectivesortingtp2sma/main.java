@@ -28,14 +28,14 @@ public class main extends Application {
 
         // Creating the environment
         Environment environment = new Environment(50, 50);
-        environment.setup(20, 200, 200);
+        environment.setup(30, 200, 200);
 
         // Create simulation and link it to the stage
         Simulation simulation = new Simulation(environment, primaryStage);
 
         // Run simulation
         primaryStage.show();
-        simulation.run(10000);
+        simulation.run(128000);
     }
 
     public static void main(String[] args) {

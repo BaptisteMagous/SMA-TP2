@@ -20,8 +20,8 @@ public class Agent extends Thread implements IElement{
     public static int vision = 1;
     static boolean analyseSurrondings = true; //Options to enhance agent performance by allowing him to look at his surronding and not only the cell he is on
     public static int memorySize = 10;
-    public static float kPlus = 0.05f;
-    public static float kMinus = 0.05f;
+    public static float kPlus = 0.10f;
+    public static float kMinus = 0.42f;
     public static float error = 0f;
 
     private int steps = 0;
@@ -69,6 +69,13 @@ public class Agent extends Thread implements IElement{
 
     public void run(){
         init();
+        if(slowMode) {
+            try {
+                Thread.sleep((long) (2000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         while (!(isInterrupted()
                 ||
                 (steps-- <= 0 && !isHolding())
@@ -126,7 +133,7 @@ public class Agent extends Thread implements IElement{
         if(action)
             analyseSurrondings();
 
-        if(slowMode) Thread.sleep((long) (50));
+        if(slowMode) Thread.sleep((long) (30));
     }
 
     protected void terminate() {
