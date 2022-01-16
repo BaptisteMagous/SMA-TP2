@@ -1,5 +1,6 @@
 package com.sma.collectivesortingtp2sma.models;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -132,4 +133,19 @@ public class Grid {
         if(updates != null) updates.add(coordinates);
     }
 
+    public Coordinates[] getCellsAround(Coordinates coordinates) {
+        ArrayList<Coordinates> coordinatesAround = new ArrayList<>();
+        Coordinates[] possibleCoordinatesAround = new Coordinates[]{
+                new Coordinates(coordinates.getX() - 1, coordinates.getY()),
+                new Coordinates(coordinates.getX() + 1, coordinates.getY()),
+                new Coordinates(coordinates.getX(), coordinates.getY() - 1),
+                new Coordinates(coordinates.getX(), coordinates.getY() + 1)
+        };
+
+        for(Coordinates possibleCoordinates:possibleCoordinatesAround){
+            if (getCell(possibleCoordinates) != null) coordinatesAround.add(possibleCoordinates);
+        }
+
+        return coordinatesAround.toArray(new Coordinates[0]);
+    }
 }

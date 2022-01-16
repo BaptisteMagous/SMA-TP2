@@ -20,7 +20,7 @@ public class Agent extends Thread implements IElement{
     public static int vision = 1;
     static boolean analyseSurrondings = true; //Options to enhance agent performance by allowing him to look at his surronding and not only the cell he is on
     public static int memorySize = 10;
-    public static float kPlus = 0.10f;
+    public static float kPlus = 0.50f;
     public static float kMinus = 0.42f;
     public static float error = 0f;
 
@@ -31,12 +31,15 @@ public class Agent extends Thread implements IElement{
 
     public Agent(){
         this.coordinates = null;
-        f.put(0, 0f);
-        f.put(1, 0f);
-        f.put(2, 0f);
+        for(int i = 0; i < 9; i++){
+            f.put(i, 0f);
+        }
     }
     public Agent(Coordinates coordinates){
         this.coordinates = coordinates;
+        for(int i = 0; i < 9; i++){
+            f.put(i, 0f);
+        }
     }
 
     @Override
@@ -103,16 +106,25 @@ public class Agent extends Thread implements IElement{
 
         int currentRessourceObjectType = -1;
 
-        if(!currentRessourceCell.isFree()) //Can lift an object from cell
+        if(currentRessourceCell.isOccupied()) //Can lift an object from cell
                 currentRessourceObjectType = ((Object) currentRessourceCell.getElement()).getType();
 
-        if(!isHolding()
-        && !currentRessourceCell.isFree()
+        //Checking signal
+        Signal signal = getEnvironment().sampleSignal(getCoordinates());
+        if(signal != null && Math.random() < signal.getIntensity()){
+            action = getEnvironment().getAgentGrid().move(getCoordinates(), Coordinates.getToward(getCoordinates(), signal.getCoordinates()));
+            if(verbose) System.out.println("Move toward signal");
+        }
+
+        //Trying to lift
+        else if(!isHolding()
+        && currentRessourceCell.isOccupied()
         && random() < pow(kPlus / (kPlus + f.get(currentRessourceObjectType)), 2)) {
             action = lift();
             if(verbose) System.out.println("Lift");
         }
 
+        // Trying to drop
         else if(isHolding()
         && currentRessourceCell.isFree()
         && random() < pow(f.get(getHeldObject().getType()) / (kMinus + f.get(getHeldObject().getType())), 2)) {
@@ -133,7 +145,7 @@ public class Agent extends Thread implements IElement{
         if(action)
             analyseSurrondings();
 
-        if(slowMode) Thread.sleep((long) (30));
+        if(slowMode) Thread.sleep((long) (100 + random() * 50));
     }
 
     protected void terminate() {
@@ -143,10 +155,39 @@ public class Agent extends Thread implements IElement{
 
 
     protected boolean lift() throws InterruptedException {
-        if(hold == null)
-            hold = (Object) getEnvironment().getResourceGrid().pop(getCoordinates());
+        if(hold == null){
+            Object object = (Object) getEnvironment().getResourceGrid().getCell(getCoordinates()).getElement();
+
+            if(object != null)
+                if(object.getType() != 5){ //Regular object
+                    hold = (Object) getEnvironment().getResourceGrid().pop(getCoordinates());
+                }
+
+                else{ //Cooperative object
+                    if(agentIsAside())
+                        hold = (Object) getEnvironment().getResourceGrid().pop(getCoordinates());
+                    else
+                        getEnvironment().generateSignal(getCoordinates(), getCoordinates(), 1);
+                }
+        }
 
         return hold != null;
+    }
+
+    private boolean agentIsAside() {
+        Cell[] cells = {
+            getEnvironment().getAgentGrid().getCell(new Coordinates(getCoordinates().getX() - 1, getCoordinates().getY())),
+            getEnvironment().getAgentGrid().getCell(new Coordinates(getCoordinates().getX() + 1, getCoordinates().getY())),
+            getEnvironment().getAgentGrid().getCell(new Coordinates(getCoordinates().getX(), getCoordinates().getY() - 1)),
+            getEnvironment().getAgentGrid().getCell(new Coordinates(getCoordinates().getX(), getCoordinates().getY() + 1))
+        };
+
+        for(int i = 0; i < 4; i++)
+            if(cells[i] != null)
+                if(cells[i].getElement() != null)
+                    return true;
+
+        return false;
     }
 
     protected boolean drop() throws InterruptedException {

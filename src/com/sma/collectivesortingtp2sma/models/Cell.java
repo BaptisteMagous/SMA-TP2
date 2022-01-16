@@ -2,8 +2,8 @@ package com.sma.collectivesortingtp2sma.models;
 
 public class Cell {
 
-    protected IElement element;
-    protected Coordinates coordinates;
+    private IElement element;
+    private final Coordinates coordinates;
 
     public Cell(Coordinates coordinates) {
         this.coordinates = coordinates;

@@ -13,7 +13,7 @@ public class mainSolo extends Application {
     public void start(Stage primaryStage) throws InterruptedException {
 
         // Creating the environment
-        Environment environment = new Environment(8, 8);
+        Environment environment = new Environment(6, 6);
         environment.setup(1, 5, 5);
 
         // Create simulation and link it to the stage

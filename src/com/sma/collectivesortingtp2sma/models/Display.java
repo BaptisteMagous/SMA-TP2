@@ -28,12 +28,33 @@ public class Display extends Thread{
 
     private Image imgAgent = new Image("file:img/agent.png", 16, 16, false, false);
     private Image imgEmpty = new Image("file:img/empty.png", 16, 16, false, false);
-    private Image imgObject1 = new Image("file:img/object1.png", 16, 16, false, false);
-    private Image imgObject2 = new Image("file:img/object2.png", 16, 16, false, false);
-    private Image imgAgentHoldObject1 = new Image("file:img/agentHolding1.png", 16, 16, false, false);
-    private Image imgAgentHoldObject2 = new Image("file:img/agentHolding2.png", 16, 16, false, false);
-    private Image imgAgentOverObject1 = new Image("file:img/agentOver1.png", 16, 16, false, false);
-    private Image imgAgentOverObject2 = new Image("file:img/agentOver2.png", 16, 16, false, false);
+    private Image[] imgObject = {
+            new Image("file:img/object0.png", 16, 16, false, false),
+            new Image("file:img/object1.png", 16, 16, false, false),
+            new Image("file:img/object2.png", 16, 16, false, false),
+            new Image("file:img/object3.png", 16, 16, false, false),
+            new Image("file:img/object4.png", 16, 16, false, false),
+            new Image("file:img/object5.png", 16, 16, false, false),
+    };
+
+    private Image[] imgAgentHoldObject = {
+            new Image("file:img/agentHolding0.png", 16, 16, false, false),
+            new Image("file:img/agentHolding1.png", 16, 16, false, false),
+            new Image("file:img/agentHolding2.png", 16, 16, false, false),
+            new Image("file:img/agentHolding3.png", 16, 16, false, false),
+            new Image("file:img/agentHolding4.png", 16, 16, false, false),
+            new Image("file:img/agentHolding5.png", 16, 16, false, false)
+    };
+
+    private Image[] imgAgentOverObject = {
+            new Image("file:img/agentOver0.png", 16, 16, false, false),
+            new Image("file:img/agentOver1.png", 16, 16, false, false),
+            new Image("file:img/agentOver2.png", 16, 16, false, false),
+            new Image("file:img/agentOver3.png", 16, 16, false, false),
+            new Image("file:img/agentOver4.png", 16, 16, false, false),
+            new Image("file:img/agentOver5.png", 16, 16, false, false)
+    };
+
     private ConcurrentLinkedQueue<Coordinates> updates;
     private boolean verbose = false;
 
@@ -151,44 +172,17 @@ public class Display extends Thread{
             Agent agent = (Agent) getEnvironment().getAgentGrid().getCell(coordinates).getElement();
             newImage = imgAgent;
             if(agent.isHolding())
-                switch (agent.getHeldObject().getType()){
-                    case 1:
-                        newImage = imgAgentHoldObject1;
-                        break;
-                    case 2:
-                        newImage = imgAgentHoldObject2;
-                        break;
-                    default:
-                        break;
-                }
+                newImage = imgAgentHoldObject[agent.getHeldObject().getType()];
 
             else if(getEnvironment().getResourceGrid().getCell(coordinates).isOccupied()) {
                 Object object = (Object) getEnvironment().getResourceGrid().getCell(coordinates).getElement();
-                switch (object.getType()) {
-                    case 1:
-                        newImage = imgAgentOverObject1;
-                        break;
-                    case 2:
-                        newImage = imgAgentOverObject2;
-                        break;
-                    default:
-                        break;
-                }
+                newImage = imgAgentOverObject[object.getType()];
             }
         }
 
         else if(getEnvironment().getResourceGrid().getCell(coordinates).isOccupied()){
             Object object = (Object) getEnvironment().getResourceGrid().getCell(coordinates).getElement();
-            switch (object.getType()){
-                case 1:
-                    newImage = imgObject1;
-                    break;
-                case 2:
-                    newImage = imgObject2;
-                    break;
-                default:
-                    break;
-            }
+            newImage = imgObject[object.getType()];
         }
 
         gridImages[coordinates.getX()][coordinates.getY()].setImage(newImage);
